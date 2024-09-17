@@ -151,6 +151,22 @@ app.post('/getPastOrders', (req, res) => {
     });
 });
 
+app.post('/deleteOrders', (req, res) => {
+    console.log("POST request received to delete orders: " + JSON.stringify(req.body) + "\n");
+
+    const orderNos = req.body.orderNos; // Directly use req.body to get the parsed JSON
+
+    orderCollection.deleteMany({ orderNo: { $in: orderNos } }, (err, result) => {
+        if (err) {
+            console.error("Error deleting orders: " + err + "\n");
+            res.status(500).send({ success: false, message: 'Failed to delete orders.' });
+        } else {
+            console.log(result.deletedCount + " orders deleted.\n");
+            res.status(200).send({ success: true, deletedCount: result.deletedCount });
+        }
+    });
+});
+
 app.delete('/deleteOrders', (req, res) => {
     console.log("DELETE request received to delete orders: " + JSON.stringify(req.body) + "\n");
     const { orderNos } = req.body;
