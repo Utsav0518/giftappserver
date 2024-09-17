@@ -151,6 +151,21 @@ app.post('/getPastOrders', (req, res) => {
     });
 });
 
+app.delete('/deleteOrders', (req, res) => {
+    console.log("DELETE request received to delete orders: " + JSON.stringify(req.body) + "\n");
+    const { orderNos } = req.body;
+
+    orderCollection.deleteMany({ orderNo: { $in: orderNos } }, (err, result) => {
+        if (err) {
+            console.error("Error deleting orders: " + err + "\n");
+            res.status(500).send({ success: false, message: 'Failed to delete orders.' });
+        } else {
+            console.log(result.deletedCount + " orders deleted.\n");
+            res.status(200).send({ success: true, deletedCount: result.deletedCount });
+        }
+    });
+});
+
 app.listen(port, () => {
   console.log(`Gift Delivery server app listening at http://localhost:${port}`) 
 });
